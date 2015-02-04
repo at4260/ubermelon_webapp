@@ -47,7 +47,7 @@ def get_melons():
 
         melons.append(melon)
 
-    print melons
+    print melons 
 
     return melons
 
