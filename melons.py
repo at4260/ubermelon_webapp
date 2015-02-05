@@ -48,17 +48,24 @@ def shopping_cart():
     for id in cartlist:
         melonlist = model.get_melon_by_id(id)
         #if melon id already in our dictionary --> increase qty by one and add melon price to total:
-
-        print melonlist
             
         if cartmelon.get(melonlist.id) == None:
             cartmelon[melonlist.id] = [melonlist.common_name, melonlist.price, qty]
+            cartmelon['Total'] += melonlist.price
         else: 
             cartmelon[melonlist.id][2] +=1
+            cartmelon['Total'] += melonlist.price
+    
     #TODO - UPDATE TOTAL    
     print cartmelon
+    total_cost = cartmelon.pop('Total')
+    print total_cost
 
-    return render_template("cart.html", cartmelon = cartmelon)
+    list_cartmelon = cartmelon.values()
+    print list_cartmelon
+
+
+    return render_template("cart.html", list_cartmelon = list_cartmelon, total_cost = total_cost)
 
 @app.route("/add_to_cart/<int:id>")
 def add_to_cart(id):
