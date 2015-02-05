@@ -33,39 +33,24 @@ def shopping_cart():
     """TODO: Display the contents of the shopping cart. The shopping cart is a
     list held in the session that contains all the melons to be added. Check
     accompanying screenshots for details."""
-   
+    cartmelon = {}
+    total_cost = 0
+
     #examine our session cookie for a key of cart and pull out the values into a list
-    if session.get('cart') == None:
-        return "Empty cart"
-    else:
+    if session.get('cart'):
         cartlist = session['cart']
 
     #loop through list to add each cart id melon name and price to cart list
-    cartmelon = {}
-    cartmelon['Total'] = 0
-    qty = 1
-
-    for id in cartlist:
-        melonlist = model.get_melon_by_id(id)
-        #if melon id already in our dictionary --> increase qty by one and add melon price to total:
-            
-        if cartmelon.get(melonlist.id) == None:
-            cartmelon[melonlist.id] = [melonlist.common_name, melonlist.price, qty]
-            cartmelon['Total'] += melonlist.price
-        else: 
-            cartmelon[melonlist.id][2] +=1
-            cartmelon['Total'] += melonlist.price
-    
-    #TODO - UPDATE TOTAL    
-    print cartmelon
-    total_cost = cartmelon.pop('Total')
-    print total_cost
-
-    list_cartmelon = cartmelon.values()
-    print list_cartmelon
-
-
-    return render_template("cart.html", list_cartmelon = list_cartmelon, total_cost = total_cost)
+        for id in cartlist:
+            melon = model.get_melon_by_id(id)
+            #if melon id already in our dictionary --> increase qty by one and add melon price to total:            
+            if cartmelon.get(melon.id) == None:
+                cartmelon[melon.id] = [melon.common_name, 1, melon.price]
+            else: 
+                cartmelon[melon.id][1] +=1
+            total_cost += melon.price
+        
+    return render_template("cart.html", cartmelon = cartmelon, total_cost = total_cost)
 
 @app.route("/add_to_cart/<int:id>")
 def add_to_cart(id):

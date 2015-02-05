@@ -1,15 +1,20 @@
 {% extends 'base.html' %}
 {% block body %}
-<table class="table table-striped">
-    <tr><th>Melon Name</th><th>Quantity</th><th>Price</th><th>Total</th></tr>
 
-    {% for item in list_cartmelon%}
-        <tr><td>{{item[0]}}</td><td>{{item[2]}}</td><td>${{'%0.2f'| format(item[1])}}</td><td>${{'%0.2f'| format(item[2]*item[1])}}</td>
+{% if cartmelon %}
+    <table class="table table-striped">
+        <tr><th>Melon Name</th><th>Quantity</th><th>Price</th><th>Total</th></tr>
+        {% for item, attr in cartmelon.items()%}
+            <tr><td>{{attr[0]}}</td><td>{{attr[1]}}</td><td>${{'%0.2f'| format(attr[2])}}<td>${{'%0.2f'| format(attr[1]*attr[2])}}</td>
+        {% endfor %}
 
-  
-    {% endfor %}
-
-</table>
-<h3>Total: ${{'%0.2f'| format(total_cost)}}</h3>
-<a href="/checkout" class="btn btn-large btn-primary">Check Out</a>
+    </table>
+    <h3>Total: ${{'%0.2f'| format(total_cost)}}</h3>
+    <a href="/checkout" class="btn btn-large btn-primary">Check Out</a>
+{% else %}
+<h1> No melons in your cart! Yet... </h1>
+{% endif %}
 {% endblock %}
+
+<!-- if cartmelon checks if there is something in cartmelon, if cartmelon is an empty dictionary, then return else: No melons in your cart!
+  -->
