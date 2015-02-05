@@ -43,8 +43,20 @@ def add_to_cart(id):
     Intended behavior: when a melon is added to a cart, redirect them to the
     shopping cart page, while displaying the message
     "Successfully added to cart" """
+    
+    if session.get('cart') == None:
+        session['cart'] = [id]
+    else:
+        session['cart'].append(id)
+    # if no cart in session - initialize cart in session
+    #if cart in session, append melon id to value list
+    print session.items()
+    
+    return "Not working"
 
-    return "Oops! This needs to be implemented!"
+    # when click add to cart, store a session that initializes the cart
+    # pass melon id to cart list
+    # or cart is a dictionary and its value is a list of watermelons you're adding
 
 
 @app.route("/login", methods=["GET"])
@@ -56,6 +68,8 @@ def show_login():
 def process_login():
     """TODO: Receive the user's login credentials located in the 'request.form'
     dictionary, look up the user, and store them in the session."""
+    session['email'] = request.form['email']
+    session['password'] = request.form['password']
     return "Oops! This needs to be implemented"
 
 
