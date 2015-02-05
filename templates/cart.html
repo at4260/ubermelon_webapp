@@ -4,8 +4,8 @@
 {% if cartmelon %}
     <table class="table table-striped">
         <tr><th>Melon Name</th><th>Quantity</th><th>Price</th><th>Total</th></tr>
-        {% for item, attr in cartmelon.items()%}
-            <tr><td>{{attr[0]}}</td><td>{{attr[1]}}</td><td>${{'%0.2f'| format(attr[2])}}<td>${{'%0.2f'| format(attr[1]*attr[2])}}</td>
+        {% for key, value in cartmelon.items()%}
+            <tr><td>{{value[0]}}</td><td>{{value[1]}}</td><td>${{'%0.2f'| format(value[2])}}<td>${{'%0.2f'| format(value[1]*value[2])}}</td>
         {% endfor %}
 
     </table>
