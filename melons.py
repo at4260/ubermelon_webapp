@@ -33,7 +33,32 @@ def shopping_cart():
     """TODO: Display the contents of the shopping cart. The shopping cart is a
     list held in the session that contains all the melons to be added. Check
     accompanying screenshots for details."""
-    return render_template("cart.html")
+   
+    #examine our session cookie for a key of cart and pull out the values into a list
+    if session.get('cart') == None:
+        return "Empty cart"
+    else:
+        cartlist = session['cart']
+
+    #loop through list to add each cart id melon name and price to cart list
+    cartmelon = {}
+    cartmelon['Total'] = 0
+    qty = 1
+
+    for id in cartlist:
+        melonlist = model.get_melon_by_id(id)
+        #if melon id already in our dictionary --> increase qty by one and add melon price to total:
+
+        print melonlist
+            
+        if cartmelon.get(melonlist.id) == None:
+            cartmelon[melonlist.id] = [melonlist.common_name, melonlist.price, qty]
+        else: 
+            cartmelon[melonlist.id][2] +=1
+    #TODO - UPDATE TOTAL    
+    print cartmelon
+
+    return render_template("cart.html", cartmelon = cartmelon)
 
 @app.route("/add_to_cart/<int:id>")
 def add_to_cart(id):
@@ -43,21 +68,13 @@ def add_to_cart(id):
     Intended behavior: when a melon is added to a cart, redirect them to the
     shopping cart page, while displaying the message
     "Successfully added to cart" """
-    
     if session.get('cart') == None:
         session['cart'] = [id]
     else:
         session['cart'].append(id)
-    # if no cart in session - initialize cart in session
-    #if cart in session, append melon id to value list
-    print session.items()
     
-    return "Not working"
-
-    # when click add to cart, store a session that initializes the cart
-    # pass melon id to cart list
-    # or cart is a dictionary and its value is a list of watermelons you're adding
-
+    flash("Your melon has been added to the cart.")
+    return redirect("/cart")
 
 @app.route("/login", methods=["GET"])
 def show_login():
