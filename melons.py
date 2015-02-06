@@ -10,10 +10,10 @@ app.jinja_env.undefined = jinja2.StrictUndefined
 # FIXME, we should fix this or delete g for this webapp, set session down in login/
 @app.before_request
 def before_request():
-    if request.values.get('email'):
-        g.email = request.values.get('email')
-    if request.values.get('password'):
-        g.password = request.values.get('password')
+    if 'email' in session:
+        g.status = "Log Out"
+    else:
+        g.status = "Log In"
 
 @app.route("/")
 def index():
@@ -86,12 +86,16 @@ def show_login():
 def process_login():
     """TODO: Receive the user's login credentials located in the 'request.form'
     dictionary, look up the user, and store them in the session."""
-    user = model.get_customer_by_email(g.email)
+
+    email = request.form['email']
+    password = request.form['password']    
+
+    user = model.get_customer_by_email(email)
 
     #display name, give log out option, flash success msg, redirect to melons   
     if user != None:
-        if user.email == g.email and user.password == g.password:
-            session['email'] = g.email
+        if user.email == email and user.password == password:
+            session['email'] = email
             flash("Hello %s %s! Login successful."% (user.givenname, user.surname))
             return redirect("/melons")
         else:
