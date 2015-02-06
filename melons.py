@@ -7,6 +7,14 @@ app = Flask(__name__)
 app.secret_key = '\xf5!\x07!qj\xa4\x08\xc6\xf8\n\x8a\x95m\xe2\x04g\xbb\x98|U\xa2f\x03'
 app.jinja_env.undefined = jinja2.StrictUndefined
 
+# FIXME, we should fix this or delete g for this webapp, set session down in login/
+@app.before_request
+def before_request():
+    if request.values.get('email'):
+        g.email = request.values.get('email')
+    if request.values.get('password'):
+        g.password = request.values.get('password')
+
 @app.route("/")
 def index():
     """This is the 'cover' page of the ubermelon site"""
@@ -49,7 +57,8 @@ def shopping_cart():
             else: 
                 cartmelon[melon.id][1] +=1
             total_cost += melon.price
-        
+    print "MELON CART"    
+    print session
     return render_template("cart.html", cartmelon = cartmelon, total_cost = total_cost)
 
 @app.route("/add_to_cart/<int:id>")
@@ -77,11 +86,28 @@ def show_login():
 def process_login():
     """TODO: Receive the user's login credentials located in the 'request.form'
     dictionary, look up the user, and store them in the session."""
-    session['email'] = request.form['email']
-    session['password'] = request.form['password']
-    return "Oops! This needs to be implemented"
+    user = model.get_customer_by_email(g.email)
 
+    #display name, give log out option, flash success msg, redirect to melons   
+    if user != None:
+        if user.email == g.email and user.password == g.password:
+            session['email'] = g.email
+            flash("Hello %s %s! Login successful."% (user.givenname, user.surname))
+            return redirect("/melons")
+        else:
+            flash("Incorrect password! Try again.")
+            return redirect("/login")
 
+    else: 
+        flash("Sorry only registered customers can log in.")
+        return redirect("/login")
+
+@app.route("/logout", methods=["GET"])
+def log_out():
+    session.clear()
+    flash("You are successfully logged out!")
+    return redirect("/login")
+        
 @app.route("/checkout")
 def checkout():
     """TODO: Implement a payment system. For now, just return them to the main
